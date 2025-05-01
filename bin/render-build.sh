@@ -2,6 +2,9 @@
 # exit on error
 set -o errexit
 
+# Unfreeze bundler to allow Gemfile.lock updates
+bundle config set frozen false
+
 # Install dependencies
 bundle install
 
