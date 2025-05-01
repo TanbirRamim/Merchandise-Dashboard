@@ -1,0 +1,2 @@
+// This is a manifest file that'll be compiled into application.js.
+// It's not necessary to add anything here if you're using a modern frontend framework. 

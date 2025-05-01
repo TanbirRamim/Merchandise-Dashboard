@@ -17,8 +17,12 @@ bundle exec rails db:migrate
 # Seed the database
 bundle exec rails db:seed
 
-# Precompile assets if the task exists
-if bundle exec rails -T | grep -q "assets:precompile"; then
-  bundle exec rails assets:precompile
-  bundle exec rails assets:clean
-fi 
+# Create necessary asset directories if they don't exist
+mkdir -p app/assets/javascripts
+mkdir -p app/assets/stylesheets
+mkdir -p app/assets/images
+mkdir -p app/assets/config
+
+# Precompile assets
+bundle exec rails assets:precompile
+bundle exec rails assets:clean 
