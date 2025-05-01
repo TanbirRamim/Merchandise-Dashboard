@@ -16,6 +16,12 @@ mkdir -p public/packs
 mkdir -p public/packs-test
 mkdir -p node_modules
 
+# Create asset directories
+mkdir -p app/assets/images
+mkdir -p app/assets/javascripts
+mkdir -p app/assets/stylesheets
+mkdir -p app/assets/config
+
 # Ensure database URL is set
 if [ -z "$DATABASE_URL" ]; then
   echo "Error: DATABASE_URL environment variable is not set"
