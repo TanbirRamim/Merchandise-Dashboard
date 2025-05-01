@@ -22,8 +22,9 @@ if [ -z "$DATABASE_URL" ]; then
   exit 1
 fi
 
-# Reset database
-bundle exec rails db:drop db:create db:migrate db:seed
+# Run migrations and seed data
+DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:migrate
+DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rails db:seed
 
 # Precompile assets if the task exists
 if bundle exec rails -T | grep -q "assets:precompile"; then
