@@ -14,6 +14,14 @@ user = User.create!(
   role: 'user'
 )
 
+# Create your user
+User.create!(
+  email: 'tanbirramim420@gmail.com',
+  password: 'password123',
+  name: 'Tanbir Ramim',
+  role: 'admin'
+)
+
 # Create products
 products = [
   {
@@ -72,5 +80,15 @@ OrderItem.create!(
   quantity: 1,
   price: 14.99
 )
+
+# Create default admin user
+User.create!(
+  email: 'admin@example.com',
+  password: 'password123',
+  name: 'Admin User',
+  role: 'admin'
+)
+
+puts "Default admin user created successfully!"
 
 puts "Seeds created successfully!"
