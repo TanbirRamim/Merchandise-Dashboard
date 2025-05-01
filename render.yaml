@@ -3,7 +3,7 @@ services:
     name: merchandise-dashboard-backend
     env: ruby
     buildCommand: "chmod +x ./bin/render-build.sh && ./bin/render-build.sh"
-    startCommand: bundle exec puma -C config/puma.rb
+    startCommand: "./bin/start.sh"
     envVars:
       - key: RAILS_MASTER_KEY
         sync: false
