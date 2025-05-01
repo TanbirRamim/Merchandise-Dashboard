@@ -1,17 +1,25 @@
 # Create admin user
-admin = User.create!(
-  email: 'admin@example.com',
-  password: 'password123',
-  name: 'Admin User',
-  role: 'admin'
+User.create!(
+  name: "Admin User",
+  email: "admin@example.com",
+  password: "password123",
+  role: "admin"
 )
 
 # Create regular user
-user = User.create!(
-  email: 'user@example.com',
-  password: 'password123',
-  name: 'Regular User',
-  role: 'user'
+User.create!(
+  name: "Regular User",
+  email: "user@example.com",
+  password: "password123",
+  role: "user"
+)
+
+# Create manager user
+User.create!(
+  name: "Manager User",
+  email: "manager@example.com",
+  password: "password123",
+  role: "manager"
 )
 
 # Create your user
@@ -23,22 +31,22 @@ User.create!(
 )
 
 # Create products
-products = [
+Product.create!([
   {
-    name: 'T-Shirt',
-    description: 'Comfortable cotton t-shirt',
+    name: "T-Shirt",
+    description: "Comfortable cotton t-shirt",
     price: 19.99,
     stock: 100
   },
   {
-    name: 'Hoodie',
-    description: 'Warm hoodie for cold weather',
-    price: 39.99,
+    name: "Hoodie",
+    description: "Warm and cozy hoodie",
+    price: 49.99,
     stock: 50
   },
   {
-    name: 'Cap',
-    description: 'Stylish cap with embroidered logo',
+    name: "Cap",
+    description: "Stylish baseball cap",
     price: 14.99,
     stock: 75
   },
@@ -54,32 +62,29 @@ products = [
     price: 9.99,
     stock: 200
   }
-]
-
-products.each do |product_data|
-  Product.create!(product_data)
-end
+])
 
 # Create some orders
 order = Order.create!(
-  user: user,
-  total: 74.97,
-  status: 'completed'
+  user: User.find_by(email: "user@example.com"),
+  status: "completed",
+  total: 74.97
 )
 
-OrderItem.create!(
-  order: order,
-  product: Product.find_by(name: 'T-Shirt'),
-  quantity: 2,
-  price: 19.99
-)
-
-OrderItem.create!(
-  order: order,
-  product: Product.find_by(name: 'Cap'),
-  quantity: 1,
-  price: 14.99
-)
+OrderItem.create!([
+  {
+    order: order,
+    product: Product.find_by(name: "T-Shirt"),
+    quantity: 2,
+    price: 19.99
+  },
+  {
+    order: order,
+    product: Product.find_by(name: "Cap"),
+    quantity: 1,
+    price: 14.99
+  }
+])
 
 # Create default admin user
 User.create!(

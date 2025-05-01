@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: merchandise-dashboard-backend
+    env: ruby
+    buildCommand: "chmod +x ./bin/render-build.sh && ./bin/render-build.sh"
+    startCommand: "bundle exec puma -C config/puma.rb"
+    envVars:
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: merchandise-dashboard-db
+          property: connectionString
+      - key: FRONTEND_URL
+        value: https://merchandise-dashboard-frontend.onrender.com
+      - key: RAILS_ENV
+        value: production
+      - key: RACK_ENV
+        value: production
+
+databases:
+  - name: merchandise-dashboard-db
+    databaseName: merchandise_dashboard
+    user: merchandise_dashboard
+    plan: free 
