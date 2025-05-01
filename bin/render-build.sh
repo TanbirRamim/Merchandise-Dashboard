@@ -22,14 +22,8 @@ if [ -z "$DATABASE_URL" ]; then
   exit 1
 fi
 
-# Create database if it doesn't exist
-bundle exec rails db:create || true
-
-# Run migrations
-bundle exec rails db:migrate
-
-# Seed the database
-bundle exec rails db:seed
+# Reset database
+bundle exec rails db:drop db:create db:migrate db:seed
 
 # Precompile assets if the task exists
 if bundle exec rails -T | grep -q "assets:precompile"; then
