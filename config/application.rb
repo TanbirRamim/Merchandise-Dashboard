@@ -28,5 +28,14 @@ module MerchandiseDashboard
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # Debug initialization process
+    config.before_initialize do
+      Rails.autoloaders.each do |autoloader|
+        autoloader.on_setup do |file, const, phase|
+          puts "Loading #{file} (Phase: #{phase})"
+        end
+      end
+    end
   end
 end
