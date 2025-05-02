@@ -9,6 +9,7 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 
 // Add request interceptor for authentication
 axios.interceptors.request.use((config) => {
+  console.log('Making request to:', config.url);
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -21,14 +22,10 @@ axios.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
       console.error('API Error:', error.response.data);
     } else if (error.request) {
-      // The request was made but no response was received
       console.error('Network Error:', error.request);
     } else {
-      // Something happened in setting up the request that triggered an Error
       console.error('Error:', error.message);
     }
     return Promise.reject(error);
@@ -69,6 +66,9 @@ export const register = async (name, email, password) => {
 
 export const login = async (email, password) => {
   try {
+    console.log('Attempting login with:', { email });
+    console.log('Using API URL:', API_URL);
+
     if (!email || !password) {
       return {
         success: false,
@@ -85,6 +85,7 @@ export const login = async (email, password) => {
     localStorage.setItem('token', token);
     return { success: true, user };
   } catch (error) {
+    console.error('Login error:', error.response?.data || error.message);
     return {
       success: false,
       error: error.response?.data?.error || 'Login failed',
@@ -99,9 +100,13 @@ export const logout = () => {
 
 export const getCurrentUser = async () => {
   try {
+    console.log('Getting current user');
+    console.log('Using API URL:', API_URL);
+    
     const response = await axios.get('/api/me');
     return { success: true, user: response.data };
   } catch (error) {
+    console.error('Get current user error:', error.response?.data || error.message);
     return {
       success: false,
       error: error.response?.data?.error || 'Failed to get user info'
