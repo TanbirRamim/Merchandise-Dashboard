@@ -8,7 +8,7 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     # Define the allowed origins
-    origins ENV['FRONTEND_URL'] || 'http://localhost:3000'
+    origins ENV['FRONTEND_URL'] || 'https://6814596f580adb591eb0db4b--peppy-liger-65e0e1.netlify.app/'
 
     resource '*',
       headers: :any,
