@@ -18,22 +18,32 @@ const Dashboard = () => {
   const { currentUser, logout } = useContext(AuthContext);
 
   useEffect(() => {
-    loadDashboardData();
-  }, []);
+    if (currentUser) {
+      loadDashboardData();
+    }
+  }, [currentUser]);
 
   const loadDashboardData = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const productsData = await fetchProducts();
-      setProducts(productsData);
+      const productsResponse = await fetchProducts();
+      if (productsResponse.success) {
+        setProducts(productsResponse.data);
+      } else {
+        throw new Error(productsResponse.error);
+      }
       
-      const statsData = await fetchDashboardStats();
-      setStats(statsData);
+      const statsResponse = await fetchDashboardStats();
+      if (statsResponse.success) {
+        setStats(statsResponse.data);
+      } else {
+        throw new Error(statsResponse.error);
+      }
       
       setIsLoading(false);
     } catch (err) {
-      setError('Failed to load dashboard data');
+      setError(err.message || 'Failed to load dashboard data');
       setIsLoading(false);
     }
   };
@@ -97,8 +107,8 @@ const Dashboard = () => {
                   <span className="text-gray-700">{currentUser.name}</span>
                 </div>
                 <button 
-                  onClick={handleLogout} 
-                  className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+                  onClick={handleLogout}
+                  className="text-gray-600 hover:text-gray-900"
                 >
                   Logout
                 </button>
@@ -108,35 +118,35 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Tabs */}
         <div className="border-b border-gray-200 mb-6">
-          <nav className="flex space-x-8">
+          <nav className="-mb-px flex space-x-8">
             <button
               onClick={() => setCurrentTab('products')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`${
                 currentTab === 'products'
                   ? 'border-indigo-500 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
             >
               Products
             </button>
             <button
               onClick={() => setCurrentTab('stats')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+              className={`${
                 currentTab === 'stats'
                   ? 'border-indigo-500 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
             >
               Statistics
             </button>
           </nav>
         </div>
 
-        {/* Dashboard content */}
+        {/* Content */}
         {renderContent()}
       </main>
     </div>

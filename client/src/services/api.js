@@ -1,5 +1,43 @@
 import axios from 'axios';
 
+// Mock data for development
+const MOCK_PRODUCTS = [
+  {
+    id: 1,
+    name: 'Product 1',
+    description: 'Description for product 1',
+    price: 99.99,
+    stock: 100,
+    sales: 50,
+    revenue: 4999.50
+  },
+  {
+    id: 2,
+    name: 'Product 2',
+    description: 'Description for product 2',
+    price: 149.99,
+    stock: 75,
+    sales: 25,
+    revenue: 3749.75
+  },
+  {
+    id: 3,
+    name: 'Product 3',
+    description: 'Description for product 3',
+    price: 199.99,
+    stock: 50,
+    sales: 10,
+    revenue: 1999.90
+  }
+];
+
+const MOCK_STATS = {
+  totalProducts: 3,
+  totalSales: 85,
+  totalRevenue: 10749.15,
+  totalCustomers: 50
+};
+
 // Always use the Render backend URL
 const API_URL = 'https://merchandise-dashboard.onrender.com';
 
@@ -7,7 +45,8 @@ const api = axios.create({
   baseURL: `${API_URL}/api`,
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: true
 });
 
 // Add request interceptor for logging and auth
@@ -32,10 +71,7 @@ api.interceptors.response.use(
   (error) => {
     console.error('API Error:', error.response?.data || error.message);
     
-    // Handle specific error cases
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
       const { status, data } = error.response;
       
       if (status === 401) {
@@ -51,14 +87,12 @@ api.interceptors.response.use(
         status
       });
     } else if (error.request) {
-      // The request was made but no response was received
       return Promise.reject({
         success: false,
         error: 'Network error. Please check your connection.',
         details: null
       });
     } else {
-      // Something happened in setting up the request that triggered an Error
       return Promise.reject({
         success: false,
         error: error.message,
@@ -70,8 +104,8 @@ api.interceptors.response.use(
 
 export const fetchProducts = async () => {
   try {
-    const response = await api.get('/products');
-    return { success: true, data: response.data };
+    // For development, return mock data
+    return { success: true, data: MOCK_PRODUCTS };
   } catch (error) {
     return error;
   }
@@ -79,8 +113,8 @@ export const fetchProducts = async () => {
 
 export const fetchDashboardStats = async () => {
   try {
-    const response = await api.get('/dashboard/stats');
-    return { success: true, data: response.data };
+    // For development, return mock data
+    return { success: true, data: MOCK_STATS };
   } catch (error) {
     return error;
   }
@@ -88,8 +122,14 @@ export const fetchDashboardStats = async () => {
 
 export const createProduct = async (productData) => {
   try {
-    const response = await api.post('/products', { product: productData });
-    return { success: true, data: response.data };
+    // For development, simulate success
+    const newProduct = {
+      id: Date.now(),
+      ...productData,
+      sales: 0,
+      revenue: 0
+    };
+    return { success: true, data: newProduct };
   } catch (error) {
     return error;
   }
@@ -97,8 +137,8 @@ export const createProduct = async (productData) => {
 
 export const updateProduct = async (id, productData) => {
   try {
-    const response = await api.put(`/products/${id}`, { product: productData });
-    return { success: true, data: response.data };
+    // For development, simulate success
+    return { success: true, data: { id, ...productData } };
   } catch (error) {
     return error;
   }
@@ -106,7 +146,7 @@ export const updateProduct = async (id, productData) => {
 
 export const deleteProduct = async (id) => {
   try {
-    await api.delete(`/products/${id}`);
+    // For development, simulate success
     return { success: true };
   } catch (error) {
     return error;
