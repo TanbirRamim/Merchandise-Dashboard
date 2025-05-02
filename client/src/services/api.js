@@ -9,7 +9,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   },
-  withCredentials: true, // Changed back to true to match backend
+  withCredentials: true, // Important for cookies
   timeout: 10000 // 10 seconds timeout
 });
 
@@ -20,7 +20,8 @@ api.interceptors.request.use(
     const safeUrl = config.url.replace(/\/auth\/login/, '/auth/***');
     console.log('Making API request to:', safeUrl);
     
-    const token = localStorage.getItem('token');
+    // Get token from cookie if available
+    const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -53,7 +54,7 @@ api.interceptors.response.use(
       
       if (status === 401) {
         // Unauthorized - clear token and redirect to login
-        localStorage.removeItem('token');
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         localStorage.removeItem('user');
         window.location.href = '/login';
       }

@@ -10,6 +10,7 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
     origins [
       ENV['FRONTEND_URL'],
       'http://localhost:3000',
+      'https://681453d739f2914ad61993dc--peppy-liger-65e0e1.netlify.app',
       'https://peppy-liger-65e0e1.netlify.app',
       'https://*.netlify.app'
     ].compact
@@ -18,6 +19,6 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
       headers: :any,
       methods: [:get, :post, :put, :patch, :delete, :options, :head],
       credentials: true,
-      expose: ['Authorization']
+      expose: ['Authorization', 'Set-Cookie']
   end
 end
