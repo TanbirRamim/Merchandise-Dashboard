@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: '/api'
+  baseURL: process.env.REACT_APP_API_URL || 'https://merchandise-dashboard.onrender.com/api'
 });
 
 // Add a request interceptor to add the auth token to requests

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || '';
+const API_URL = process.env.REACT_APP_API_URL || 'https://merchandise-dashboard.onrender.com';
 
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
@@ -9,6 +9,20 @@ axios.interceptors.request.use((config) => {
   }
   return config;
 });
+
+export const register = async (name, email, password) => {
+  try {
+    const response = await axios.post(`${API_URL}/api/register`, { name, email, password });
+    const { token, user } = response.data;
+    localStorage.setItem('token', token);
+    return { success: true, user };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.response?.data?.error || 'Registration failed'
+    };
+  }
+};
 
 export const login = async (email, password) => {
   try {
