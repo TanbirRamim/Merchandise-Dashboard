@@ -17,7 +17,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // Don't log sensitive data
-    const safeUrl = config.url.replace(/\/auth\/login/, '/auth/***');
+    const safeUrl = config.url.replace(/\/login/, '/***');
     console.log('Making API request to:', safeUrl);
     
     // Get token from cookie if available
@@ -89,6 +89,34 @@ api.interceptors.response.use(
     }
   }
 );
+
+// Auth functions
+export const login = async (credentials) => {
+  try {
+    const response = await api.post('/login', credentials);
+    return { success: true, data: response.data };
+  } catch (error) {
+    return error;
+  }
+};
+
+export const register = async (userData) => {
+  try {
+    const response = await api.post('/register', userData);
+    return { success: true, data: response.data };
+  } catch (error) {
+    return error;
+  }
+};
+
+export const getCurrentUser = async () => {
+  try {
+    const response = await api.get('/me');
+    return { success: true, data: response.data };
+  } catch (error) {
+    return error;
+  }
+};
 
 export const fetchProducts = async () => {
   try {
