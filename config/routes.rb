@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   namespace :api do
     # Auth routes
     post "/login", to: "auth#login"
+    post "/register", to: "auth#register"
     get "/me", to: "auth#me"
 
     # Other API routes can be added here

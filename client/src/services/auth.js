@@ -12,14 +12,17 @@ axios.interceptors.request.use((config) => {
 
 export const register = async (name, email, password) => {
   try {
+    console.log('Attempting registration with:', { name, email });
     const response = await axios.post(`${API_URL}/api/register`, { name, email, password });
     const { token, user } = response.data;
     localStorage.setItem('token', token);
     return { success: true, user };
   } catch (error) {
+    console.error('Registration error:', error.response?.data || error.message);
     return {
       success: false,
-      error: error.response?.data?.error || 'Registration failed'
+      error: error.response?.data?.error || 'Registration failed. Please try again.',
+      details: error.response?.data?.details
     };
   }
 };
