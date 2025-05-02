@@ -9,7 +9,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   },
-  withCredentials: false, // Changed to false for CORS
+  withCredentials: true, // Changed back to true to match backend
   timeout: 10000 // 10 seconds timeout
 });
 
