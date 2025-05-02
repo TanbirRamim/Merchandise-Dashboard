@@ -4,7 +4,7 @@ A full-stack application for managing merchandise inventory and orders.
 
 ## Live Demo
 
-- Frontend: https://peppy-liger-65e0e1.netlify.app
+- Frontend: https://merchandise-dashboard-frontend.onrender.com
 - Backend API: https://merchandise-dashboard.onrender.com
 
 ## Features
@@ -79,7 +79,7 @@ npm start
 ## Deployment
 
 The application is deployed on:
-- Frontend: Netlify
+- Frontend: Render
 - Backend: Render
 
 ## License

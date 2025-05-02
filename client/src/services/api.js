@@ -56,7 +56,7 @@ api.interceptors.response.use(
         // Unauthorized - clear token and redirect to login
         document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         localStorage.removeItem('user');
-        window.location.href = '/login';
+        window.location.href = 'https://merchandise-dashboard-frontend.onrender.com/login';
       }
       
       return Promise.reject({

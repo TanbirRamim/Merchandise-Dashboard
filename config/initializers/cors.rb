@@ -8,8 +8,7 @@
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
     origins [
-      'https://681457cf8fbec35b3ba5446e--peppy-liger-65e0e1.netlify.app',
-      'https://peppy-liger-65e0e1.netlify.app',
+      'https://merchandise-dashboard-frontend.onrender.com',
       'https://merchandise-dashboard.onrender.com'
     ]
 
