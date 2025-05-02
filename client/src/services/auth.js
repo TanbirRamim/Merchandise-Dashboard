@@ -50,7 +50,7 @@ export const register = async (name, email, password) => {
       };
     }
 
-    const response = await axios.post('/api/register', { name, email, password });
+    const response = await axios.post(`${API_URL}/api/register`, { name, email, password });
     const { token, user } = response.data;
     localStorage.setItem('token', token);
     return { success: true, user };
@@ -80,7 +80,7 @@ export const login = async (email, password) => {
       };
     }
 
-    const response = await axios.post('/api/login', { email, password });
+    const response = await axios.post(`${API_URL}/api/login`, { email, password });
     const { token, user } = response.data;
     localStorage.setItem('token', token);
     return { success: true, user };
@@ -103,7 +103,7 @@ export const getCurrentUser = async () => {
     console.log('Getting current user');
     console.log('Using API URL:', API_URL);
     
-    const response = await axios.get('/api/me');
+    const response = await axios.get(`${API_URL}/api/me`);
     return { success: true, user: response.data };
   } catch (error) {
     console.error('Get current user error:', error.response?.data || error.message);
