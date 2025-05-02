@@ -28,5 +28,11 @@ module MerchandiseDashboard
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # Ensure solid_queue and solid_cache are properly loaded
+    config.after_initialize do
+      require 'solid_queue'
+      require 'solid_cache'
+    end
   end
 end
