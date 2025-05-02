@@ -2,19 +2,19 @@ services:
   - type: web
     name: merchandise-dashboard-backend
     env: ruby
-    buildCommand: bundle install && bundle exec rails assets:precompile
-    startCommand: bundle exec puma -C config/puma.rb
+    buildCommand: cd backend && bundle install
+    startCommand: cd backend && bundle exec rails server -p $PORT
     envVars:
-      - key: RAILS_MASTER_KEY
-        sync: false
+      - key: RAILS_ENV
+        value: production
       - key: DATABASE_URL
         fromDatabase:
           name: merchandise-dashboard-db
           property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
       - key: FRONTEND_URL
         value: https://merchandise-dashboard-frontend.onrender.com
-      - key: RAILS_ENV
-        value: production
       - key: RACK_ENV
         value: production
 
