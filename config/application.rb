@@ -28,16 +28,5 @@ module MerchandiseDashboard
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
-
-    # Configure Solid Queue
-    config.active_job.queue_adapter = :solid_queue
-    
-    # Initialize Solid Queue configuration
-    config.after_initialize do
-      require 'solid_queue'
-      Rails.application.config.solid_queue.configure do |config|
-        config.concurrency = ENV.fetch("SOLID_QUEUE_CONCURRENCY", 5).to_i
-      end
-    end
   end
 end
