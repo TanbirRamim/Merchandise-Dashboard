@@ -1,7 +1,22 @@
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'https://merchandise-dashboard.onrender.com';
+// Get API URL from environment variable or use default
+const getApiUrl = () => {
+  const envUrl = process.env.REACT_APP_API_URL;
+  if (envUrl) {
+    return envUrl;
+  }
+  // Default to production URL if no environment variable is set
+  return 'https://merchandise-dashboard.onrender.com';
+};
 
+const API_URL = getApiUrl();
+
+// Configure axios defaults
+axios.defaults.baseURL = API_URL;
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+
+// Add request interceptor for authentication
 axios.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -10,9 +25,29 @@ axios.interceptors.request.use((config) => {
   return config;
 });
 
+// Add response interceptor for error handling
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.error('API Error:', error.response.data);
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error('Network Error:', error.request);
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.error('Error:', error.message);
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const register = async (name, email, password) => {
   try {
     console.log('Attempting registration with:', { name, email });
+    console.log('Using API URL:', API_URL);
     
     // Validate input
     if (!name || !email || !password) {
@@ -27,7 +62,7 @@ export const register = async (name, email, password) => {
       };
     }
 
-    const response = await axios.post(`${API_URL}/api/register`, { name, email, password });
+    const response = await axios.post('/api/register', { name, email, password });
     const { token, user } = response.data;
     localStorage.setItem('token', token);
     return { success: true, user };
@@ -54,7 +89,7 @@ export const login = async (email, password) => {
       };
     }
 
-    const response = await axios.post(`${API_URL}/api/login`, { email, password });
+    const response = await axios.post('/api/login', { email, password });
     const { token, user } = response.data;
     localStorage.setItem('token', token);
     return { success: true, user };
@@ -73,7 +108,7 @@ export const logout = () => {
 
 export const getCurrentUser = async () => {
   try {
-    const response = await axios.get(`${API_URL}/api/me`);
+    const response = await axios.get('/api/me');
     return { success: true, user: response.data };
   } catch (error) {
     return {
