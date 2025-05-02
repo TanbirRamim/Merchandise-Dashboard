@@ -1,114 +1,90 @@
 # Merchandise Dashboard
 
-A full-stack web application for managing merchandise inventory, tracking sales, and monitoring business metrics. Built with Ruby on Rails and React.js.
+A full-stack application for managing merchandise inventory and orders.
+
+## Live Demo
+
+- Frontend: https://peppy-liger-65e0e1.netlify.app
+- Backend API: https://merchandise-dashboard.onrender.com
 
 ## Features
 
-- **User Authentication**
-  - Secure login system with role-based access control
-  - Admin and regular user roles
-  - Protected routes and API endpoints
-
-- **Product Management**
-  - Create, read, update, and delete products
-  - Track product inventory and pricing
-  - Search and sort products
-  - Responsive product listing with pagination
-
-- **Dashboard Statistics**
-  - Real-time overview of key business metrics
-  - Total products count
-  - Total sales volume
-  - Total revenue from completed orders
-  - Customer count tracking
-
-- **Order Management**
-  - Track order status
-  - View order details
-  - Monitor completed orders
+- User authentication and authorization
+- Product management
+- Order tracking
+- Dashboard with statistics
+- Responsive design
 
 ## Tech Stack
 
-### Backend
-- **Ruby on Rails 8.0**
-  - RESTful API architecture
-  - ActiveRecord for database management
-  - JWT authentication
-  - PostgreSQL database
-
 ### Frontend
-- **React.js**
-  - Modern, component-based architecture
-  - React Router for navigation
-  - Context API for state management
-  - Axios for API communication
+- React
+- Material-UI
+- Axios
+- React Router
+- Context API
 
-### UI/UX
-- **Tailwind CSS**
-  - Responsive design
-  - Modern UI components
-  - Custom animations and transitions
-  - Dark mode support
-
-### Development Tools
-- Webpack for asset bundling
-- ESLint for code linting
-- Prettier for code formatting
-- Git for version control
+### Backend
+- Ruby on Rails
+- PostgreSQL
+- JWT Authentication
+- Rack CORS
 
 ## Getting Started
 
 ### Prerequisites
-- Ruby 3.2.2 or higher
-- Node.js 16.x or higher
-- PostgreSQL 14.x or higher
-- Yarn or npm package manager
+- Node.js (v14 or higher)
+- Ruby (v3.0 or higher)
+- PostgreSQL
 
 ### Installation
 
-1. Clone the repository:
+1. Clone the repository
 ```bash
 git clone https://github.com/yourusername/merchandise-dashboard.git
 cd merchandise-dashboard
 ```
 
-2. Install backend dependencies:
+2. Install backend dependencies
 ```bash
 bundle install
 ```
 
-3. Install frontend dependencies:
-```bash
-cd client
-yarn install
-```
-
-4. Set up the database:
+3. Set up the database
 ```bash
 rails db:create
 rails db:migrate
 rails db:seed
 ```
 
-5. Start the development servers:
-
-Backend (from root directory):
+4. Install frontend dependencies
 ```bash
-rails server
+cd client
+npm install
 ```
 
-Frontend (from client directory):
+5. Start the development servers
+
+Backend:
 ```bash
-yarn start
+rails server -p 3001
 ```
 
-The application will be available at:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:3001
+Frontend:
+```bash
+cd client
+npm start
+```
 
-### Default Admin Credentials
-- Email: admin@example.com
-- Password: password123
+## Deployment
+
+The application is deployed on:
+- Frontend: Netlify
+- Backend: Render
+
+## License
+
+This project is licensed under the MIT License.
 
 ## Project Structure
 
@@ -151,10 +127,6 @@ merchandise-dashboard/
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
