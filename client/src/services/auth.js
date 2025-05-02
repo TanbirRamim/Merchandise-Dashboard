@@ -1,16 +1,7 @@
 import axios from 'axios';
 
-// Get API URL from environment variable or use default
-const getApiUrl = () => {
-  const envUrl = process.env.REACT_APP_API_URL;
-  if (envUrl) {
-    return envUrl;
-  }
-  // Default to production URL if no environment variable is set
-  return 'https://merchandise-dashboard.onrender.com';
-};
-
-const API_URL = getApiUrl();
+// Always use the Render backend URL
+const API_URL = 'https://merchandise-dashboard.onrender.com';
 
 // Configure axios defaults
 axios.defaults.baseURL = API_URL;
