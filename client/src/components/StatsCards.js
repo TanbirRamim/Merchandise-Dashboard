@@ -1,6 +1,20 @@
 import React from 'react';
 
 const StatsCards = ({ stats }) => {
+  if (!stats) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="flex items-center space-x-2 text-gray-500">
+          <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Loading statistics...</span>
+        </div>
+      </div>
+    );
+  }
+
   // Convert string values to numbers for revenue calculations
   const totalRevenue = Number(stats.totalRevenue) || 0;
   const monthlyRevenue = Number(stats.monthlyRevenue) || 0;
@@ -12,7 +26,7 @@ const StatsCards = ({ stats }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Total Products</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.totalProducts}</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.totalProducts || 0}</p>
             </div>
             <div className="p-3 bg-blue-50 rounded-full">
               <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -26,7 +40,7 @@ const StatsCards = ({ stats }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Total Sales</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.totalSales}</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.totalSales || 0}</p>
             </div>
             <div className="p-3 bg-green-50 rounded-full">
               <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -54,7 +68,7 @@ const StatsCards = ({ stats }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Total Customers</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.totalCustomers}</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.totalCustomers || 0}</p>
             </div>
             <div className="p-3 bg-yellow-50 rounded-full">
               <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,7 +83,7 @@ const StatsCards = ({ stats }) => {
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Recent Orders</h3>
           <div className="space-y-4">
-            {stats.recentOrders.map((order) => (
+            {stats.recentOrders?.map((order) => (
               <div key={order.id} className="flex items-center justify-between border-b border-gray-100 pb-4">
                 <div>
                   <p className="text-sm font-medium text-gray-900">Order #{order.id}</p>
@@ -87,7 +101,7 @@ const StatsCards = ({ stats }) => {
         <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100">
           <h3 className="text-lg font-medium text-gray-900 mb-4">Top Products</h3>
           <div className="space-y-4">
-            {stats.topProducts.map((product) => (
+            {stats.topProducts?.map((product) => (
               <div key={product.id} className="flex items-center justify-between border-b border-gray-100 pb-4">
                 <div>
                   <p className="text-sm font-medium text-gray-900">{product.name}</p>
@@ -122,7 +136,7 @@ const StatsCards = ({ stats }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-500">Monthly Sales</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.monthlySales}</p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.monthlySales || 0}</p>
             </div>
             <div className="p-3 bg-pink-50 rounded-full">
               <svg className="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

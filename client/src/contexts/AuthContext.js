@@ -4,7 +4,11 @@ import { login as authLogin, logout as authLogout, getCurrentUser } from '../ser
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    // Try to get user from localStorage on initial load
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -18,18 +22,31 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // Save user to localStorage whenever it changes
+  useEffect(() => {
+    if (currentUser) {
+      localStorage.setItem('user', JSON.stringify(currentUser));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [currentUser]);
+
   const checkUserStatus = async () => {
     try {
       const response = await getCurrentUser();
       if (response.success) {
         setCurrentUser(response.user);
+        setError(null);
       } else {
         localStorage.removeItem('token');
-        setError('Session expired. Please login again.');
+        localStorage.removeItem('user');
+        setError(response.error || 'Session expired. Please login again.');
       }
       setLoading(false);
     } catch (err) {
+      console.error('Check user status error:', err);
       localStorage.removeItem('token');
+      localStorage.removeItem('user');
       setError('Session expired. Please login again.');
       setLoading(false);
     }
@@ -37,24 +54,32 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
+      setError(null);
       const response = await authLogin(email, password);
       if (response.success) {
         setCurrentUser(response.user);
         setError(null);
         return true;
       } else {
-        setError(response.error || 'Login failed');
+        setError(response.error || 'Login failed. Please check your credentials.');
         return false;
       }
     } catch (err) {
-      setError(err.error || 'Login failed');
+      console.error('Login error:', err);
+      setError(err.error || 'Login failed. Please check your credentials.');
       return false;
     }
   };
 
-  const logout = () => {
-    authLogout();
-    setCurrentUser(null);
+  const logout = async () => {
+    try {
+      await authLogout();
+    } catch (err) {
+      console.error('Logout error:', err);
+    } finally {
+      setCurrentUser(null);
+      localStorage.removeItem('user');
+    }
   };
 
   return (

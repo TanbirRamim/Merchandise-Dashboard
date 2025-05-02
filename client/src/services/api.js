@@ -1,58 +1,25 @@
 import axios from 'axios';
 
-// Mock data for development
-const MOCK_PRODUCTS = [
-  {
-    id: 1,
-    name: 'Product 1',
-    description: 'Description for product 1',
-    price: 99.99,
-    stock: 100,
-    sales: 50,
-    revenue: 4999.50
-  },
-  {
-    id: 2,
-    name: 'Product 2',
-    description: 'Description for product 2',
-    price: 149.99,
-    stock: 75,
-    sales: 25,
-    revenue: 3749.75
-  },
-  {
-    id: 3,
-    name: 'Product 3',
-    description: 'Description for product 3',
-    price: 199.99,
-    stock: 50,
-    sales: 10,
-    revenue: 1999.90
-  }
-];
-
-const MOCK_STATS = {
-  totalProducts: 3,
-  totalSales: 85,
-  totalRevenue: 10749.15,
-  totalCustomers: 50
-};
-
 // Always use the Render backend URL
 const API_URL = 'https://merchandise-dashboard.onrender.com';
 
 const api = axios.create({
   baseURL: `${API_URL}/api`,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
-  withCredentials: true
+  withCredentials: false, // Changed to false for CORS
+  timeout: 10000 // 10 seconds timeout
 });
 
 // Add request interceptor for logging and auth
 api.interceptors.request.use(
   (config) => {
-    console.log('Making API request to:', config.url);
+    // Don't log sensitive data
+    const safeUrl = config.url.replace(/\/auth\/login/, '/auth/***');
+    console.log('Making API request to:', safeUrl);
+    
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -67,7 +34,17 @@ api.interceptors.request.use(
 
 // Add response interceptor for error handling
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Validate response format
+    if (!response.data) {
+      return Promise.reject({
+        success: false,
+        error: 'Invalid response from server',
+        details: 'Response data is missing'
+      });
+    }
+    return response;
+  },
   (error) => {
     console.error('API Error:', error.response?.data || error.message);
     
@@ -77,6 +54,7 @@ api.interceptors.response.use(
       if (status === 401) {
         // Unauthorized - clear token and redirect to login
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         window.location.href = '/login';
       }
       
@@ -87,15 +65,24 @@ api.interceptors.response.use(
         status
       });
     } else if (error.request) {
+      // Network error
       return Promise.reject({
         success: false,
         error: 'Network error. Please check your connection.',
         details: null
       });
-    } else {
+    } else if (error.code === 'ECONNABORTED') {
+      // Timeout error
       return Promise.reject({
         success: false,
-        error: error.message,
+        error: 'Request timeout. Please try again.',
+        details: null
+      });
+    } else {
+      // Other errors
+      return Promise.reject({
+        success: false,
+        error: error.message || 'An unexpected error occurred',
         details: null
       });
     }
@@ -104,8 +91,8 @@ api.interceptors.response.use(
 
 export const fetchProducts = async () => {
   try {
-    // For development, return mock data
-    return { success: true, data: MOCK_PRODUCTS };
+    const response = await api.get('/products');
+    return { success: true, data: response.data };
   } catch (error) {
     return error;
   }
@@ -113,8 +100,8 @@ export const fetchProducts = async () => {
 
 export const fetchDashboardStats = async () => {
   try {
-    // For development, return mock data
-    return { success: true, data: MOCK_STATS };
+    const response = await api.get('/dashboard/stats');
+    return { success: true, data: response.data };
   } catch (error) {
     return error;
   }
@@ -122,14 +109,8 @@ export const fetchDashboardStats = async () => {
 
 export const createProduct = async (productData) => {
   try {
-    // For development, simulate success
-    const newProduct = {
-      id: Date.now(),
-      ...productData,
-      sales: 0,
-      revenue: 0
-    };
-    return { success: true, data: newProduct };
+    const response = await api.post('/products', productData);
+    return { success: true, data: response.data };
   } catch (error) {
     return error;
   }
@@ -137,8 +118,8 @@ export const createProduct = async (productData) => {
 
 export const updateProduct = async (id, productData) => {
   try {
-    // For development, simulate success
-    return { success: true, data: { id, ...productData } };
+    const response = await api.put(`/products/${id}`, productData);
+    return { success: true, data: response.data };
   } catch (error) {
     return error;
   }
@@ -146,7 +127,7 @@ export const updateProduct = async (id, productData) => {
 
 export const deleteProduct = async (id) => {
   try {
-    // For development, simulate success
+    await api.delete(`/products/${id}`);
     return { success: true };
   } catch (error) {
     return error;
