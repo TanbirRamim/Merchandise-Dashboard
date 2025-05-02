@@ -13,6 +13,20 @@ axios.interceptors.request.use((config) => {
 export const register = async (name, email, password) => {
   try {
     console.log('Attempting registration with:', { name, email });
+    
+    // Validate input
+    if (!name || !email || !password) {
+      return {
+        success: false,
+        error: 'All fields are required',
+        details: {
+          name: !name ? 'Name is required' : null,
+          email: !email ? 'Email is required' : null,
+          password: !password ? 'Password is required' : null
+        }
+      };
+    }
+
     const response = await axios.post(`${API_URL}/api/register`, { name, email, password });
     const { token, user } = response.data;
     localStorage.setItem('token', token);
@@ -29,6 +43,17 @@ export const register = async (name, email, password) => {
 
 export const login = async (email, password) => {
   try {
+    if (!email || !password) {
+      return {
+        success: false,
+        error: 'Email and password are required',
+        details: {
+          email: !email ? 'Email is required' : null,
+          password: !password ? 'Password is required' : null
+        }
+      };
+    }
+
     const response = await axios.post(`${API_URL}/api/login`, { email, password });
     const { token, user } = response.data;
     localStorage.setItem('token', token);
@@ -36,7 +61,8 @@ export const login = async (email, password) => {
   } catch (error) {
     return {
       success: false,
-      error: error.response?.data?.error || 'Login failed'
+      error: error.response?.data?.error || 'Login failed',
+      details: error.response?.data?.details
     };
   }
 };

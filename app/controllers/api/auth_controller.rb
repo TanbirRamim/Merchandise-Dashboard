@@ -5,6 +5,26 @@ module Api
     def register
       Rails.logger.info "Registration attempt with params: #{params.inspect}"
       
+      # Validate required parameters
+      unless params[:email].present? && params[:password].present? && params[:name].present?
+        return render json: { 
+          error: "Missing required fields",
+          details: {
+            email: "Email is required",
+            password: "Password is required",
+            name: "Name is required"
+          }
+        }, status: :unprocessable_entity
+      end
+
+      # Check if user already exists
+      if User.exists?(email: params[:email])
+        return render json: { 
+          error: "Email already registered",
+          details: { email: "This email is already in use" }
+        }, status: :unprocessable_entity
+      end
+
       user = User.new(
         email: params[:email],
         password: params[:password],
@@ -37,6 +57,10 @@ module Api
     end
 
     def login
+      unless params[:email].present? && params[:password].present?
+        return render json: { error: "Email and password are required" }, status: :unprocessable_entity
+      end
+
       user = User.find_by(email: params[:email])
 
       if user&.authenticate(params[:password])
