@@ -97,10 +97,21 @@ Rails.application.configure do
   # Enable DNS rebinding protection and other `Host` header attacks.
   config.hosts << "merchandise-dashboard.onrender.com"
   config.hosts << "*.onrender.com"
+  config.hosts << "*.netlify.app"
 
   # Configure session store
-  config.session_store :cookie_store, key: '_merchandise_dashboard_session', 
+  config.session_store :cookie_store, 
+    key: '_merchandise_dashboard_session', 
     secure: true, 
     same_site: :none,
     domain: :all
+
+  # Configure CORS headers
+  config.action_dispatch.default_headers = {
+    'Access-Control-Allow-Origin' => '*',
+    'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, PATCH, OPTIONS',
+    'Access-Control-Allow-Headers' => 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials' => 'true',
+    'Access-Control-Max-Age' => '600'
+  }
 end

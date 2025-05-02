@@ -7,18 +7,12 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins [
-      ENV['FRONTEND_URL'],
-      'http://localhost:3000',
-      'https://681453d739f2914ad61993dc--peppy-liger-65e0e1.netlify.app',
-      'https://peppy-liger-65e0e1.netlify.app',
-      'https://*.netlify.app'
-    ].compact
-
+    origins '*'
     resource '*',
       headers: :any,
       methods: [:get, :post, :put, :patch, :delete, :options, :head],
       credentials: true,
-      expose: ['Authorization', 'Set-Cookie']
+      expose: ['Authorization', 'Set-Cookie'],
+      max_age: 600
   end
 end
