@@ -1,14 +1,30 @@
 import axios from 'axios';
 
+// Mock user data for development
+const MOCK_USER = {
+  id: 1,
+  name: 'Test User',
+  email: 'test@example.com',
+  role: 'admin'
+};
+
+// Mock token
+const MOCK_TOKEN = 'mock-jwt-token';
+
 // Always use the Render backend URL
 const API_URL = 'https://merchandise-dashboard.onrender.com';
 
 // Configure axios defaults
-axios.defaults.baseURL = API_URL;
-axios.defaults.headers.common['Content-Type'] = 'application/json';
+const api = axios.create({
+  baseURL: `${API_URL}/api`,
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  withCredentials: true
+});
 
 // Add request interceptor for authentication
-axios.interceptors.request.use((config) => {
+api.interceptors.request.use((config) => {
   console.log('Making request to:', config.url);
   const token = localStorage.getItem('token');
   if (token) {
@@ -18,24 +34,45 @@ axios.interceptors.request.use((config) => {
 });
 
 // Add response interceptor for error handling
-axios.interceptors.response.use(
+api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('API Error:', error.response?.data || error.message);
+    
     if (error.response) {
-      console.error('API Error:', error.response.data);
+      const { status, data } = error.response;
+      
+      if (status === 401) {
+        // Unauthorized - clear token and redirect to login
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      }
+      
+      return Promise.reject({
+        success: false,
+        error: data.error || 'An error occurred',
+        details: data.details,
+        status
+      });
     } else if (error.request) {
-      console.error('Network Error:', error.request);
+      return Promise.reject({
+        success: false,
+        error: 'Network error. Please check your connection.',
+        details: null
+      });
     } else {
-      console.error('Error:', error.message);
+      return Promise.reject({
+        success: false,
+        error: error.message,
+        details: null
+      });
     }
-    return Promise.reject(error);
   }
 );
 
 export const register = async (name, email, password) => {
   try {
-    console.log('Attempting registration with:', { name, email });
-    console.log('Using API URL:', API_URL);
+    console.log('Mock registration with:', { name, email });
     
     // Validate input
     if (!name || !email || !password) {
@@ -50,24 +87,20 @@ export const register = async (name, email, password) => {
       };
     }
 
-    const response = await axios.post(`${API_URL}/api/register`, { name, email, password });
-    const { token, user } = response.data;
-    localStorage.setItem('token', token);
-    return { success: true, user };
-  } catch (error) {
-    console.error('Registration error:', error.response?.data || error.message);
-    return {
-      success: false,
-      error: error.response?.data?.error || 'Registration failed. Please try again.',
-      details: error.response?.data?.details
+    // Mock successful registration
+    localStorage.setItem('token', MOCK_TOKEN);
+    return { 
+      success: true, 
+      user: { ...MOCK_USER, name, email } 
     };
+  } catch (error) {
+    return error;
   }
 };
 
 export const login = async (email, password) => {
   try {
-    console.log('Attempting login with:', { email });
-    console.log('Using API URL:', API_URL);
+    console.log('Mock login with:', { email });
 
     if (!email || !password) {
       return {
@@ -80,17 +113,14 @@ export const login = async (email, password) => {
       };
     }
 
-    const response = await axios.post(`${API_URL}/api/login`, { email, password });
-    const { token, user } = response.data;
-    localStorage.setItem('token', token);
-    return { success: true, user };
-  } catch (error) {
-    console.error('Login error:', error.response?.data || error.message);
-    return {
-      success: false,
-      error: error.response?.data?.error || 'Login failed',
-      details: error.response?.data?.details
+    // Mock successful login
+    localStorage.setItem('token', MOCK_TOKEN);
+    return { 
+      success: true, 
+      user: { ...MOCK_USER, email } 
     };
+  } catch (error) {
+    return error;
   }
 };
 
@@ -100,16 +130,21 @@ export const logout = () => {
 
 export const getCurrentUser = async () => {
   try {
-    console.log('Getting current user');
-    console.log('Using API URL:', API_URL);
+    console.log('Getting mock current user');
+    const token = localStorage.getItem('token');
     
-    const response = await axios.get(`${API_URL}/api/me`);
-    return { success: true, user: response.data };
-  } catch (error) {
-    console.error('Get current user error:', error.response?.data || error.message);
-    return {
-      success: false,
-      error: error.response?.data?.error || 'Failed to get user info'
+    if (!token) {
+      return {
+        success: false,
+        error: 'Not authenticated'
+      };
+    }
+
+    return { 
+      success: true, 
+      user: MOCK_USER 
     };
+  } catch (error) {
+    return error;
   }
 };
