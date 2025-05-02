@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import { login as authLogin, logout as authLogout, getCurrentUser } from '../services/auth';
 
 export const AuthContext = createContext();
 
@@ -12,20 +12,21 @@ export const AuthProvider = ({ children }) => {
     // Check if token exists
     const token = localStorage.getItem('token');
     if (token) {
-      checkUserStatus(token);
+      checkUserStatus();
     } else {
       setLoading(false);
     }
   }, []);
 
-  const checkUserStatus = async (token) => {
+  const checkUserStatus = async () => {
     try {
-      const response = await axios.get('/api/me', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      setCurrentUser(response.data);
+      const response = await getCurrentUser();
+      if (response.success) {
+        setCurrentUser(response.user);
+      } else {
+        localStorage.removeItem('token');
+        setError('Session expired. Please login again.');
+      }
       setLoading(false);
     } catch (err) {
       localStorage.removeItem('token');
@@ -36,21 +37,23 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('/api/login', { email, password });
-      const { token, user } = response.data;
-      
-      localStorage.setItem('token', token);
-      setCurrentUser(user);
-      setError(null);
-      return true;
+      const response = await authLogin(email, password);
+      if (response.success) {
+        setCurrentUser(response.user);
+        setError(null);
+        return true;
+      } else {
+        setError(response.error || 'Login failed');
+        return false;
+      }
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      setError(err.error || 'Login failed');
       return false;
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    authLogout();
     setCurrentUser(null);
   };
 
