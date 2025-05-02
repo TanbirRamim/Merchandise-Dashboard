@@ -13,8 +13,8 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Check if token exists
-    const token = localStorage.getItem('token');
+    // Check if token exists in cookie
+    const token = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];
     if (token) {
       checkUserStatus();
     } else {
@@ -35,17 +35,19 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await getCurrentUser();
       if (response.success) {
-        setCurrentUser(response.user);
+        setCurrentUser(response.data);
         setError(null);
       } else {
-        localStorage.removeItem('token');
+        // Clear token cookie and user data
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         localStorage.removeItem('user');
         setError(response.error || 'Session expired. Please login again.');
       }
       setLoading(false);
     } catch (err) {
       console.error('Check user status error:', err);
-      localStorage.removeItem('token');
+      // Clear token cookie and user data
+      document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       localStorage.removeItem('user');
       setError('Session expired. Please login again.');
       setLoading(false);

@@ -2,9 +2,10 @@ import api from './api';
 
 export const login = async (email, password) => {
   try {
-    const response = await api.post('/auth/login', { email, password });
+    const response = await api.post('/login', { email, password });
     if (response.data && response.data.token) {
-      localStorage.setItem('token', response.data.token);
+      // Set token in cookie
+      document.cookie = `token=${response.data.token}; path=/; secure; samesite=none`;
       return {
         success: true,
         user: response.data.user
@@ -25,18 +26,17 @@ export const login = async (email, password) => {
 
 export const logout = async () => {
   try {
-    await api.post('/auth/logout');
+    // Clear token cookie
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    localStorage.removeItem('user');
   } catch (error) {
     console.error('Logout error:', error);
-  } finally {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
   }
 };
 
 export const getCurrentUser = async () => {
   try {
-    const response = await api.get('/auth/me');
+    const response = await api.get('/me');
     if (response.data) {
       return {
         success: true,
