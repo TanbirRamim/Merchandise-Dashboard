@@ -46,12 +46,14 @@ class ApplicationController < ActionController::API
     nil
   end
 
+  private
+
   def authenticate_user!
     token = request.headers["Authorization"]&.split(" ")&.last
     if token
       begin
         decoded = JWT.decode(token, Rails.application.secrets.secret_key_base)
-        @current_user = User.find(decoded[ 0 ][ "user_id" ])
+        @current_user = User.find(decoded[0]["user_id"])
       rescue JWT::DecodeError
         render json: { error: "Invalid token" }, status: :unauthorized
       end
