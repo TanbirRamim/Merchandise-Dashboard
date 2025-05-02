@@ -47,7 +47,11 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.error('API Error:', error.response?.data || error.message);
+    console.error('API Error:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      message: error.message
+    });
     
     if (error.response) {
       const { status, data } = error.response;
@@ -56,37 +60,23 @@ api.interceptors.response.use(
         // Unauthorized - clear token and redirect to login
         document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         localStorage.removeItem('user');
-        window.location.href = 'https://merchandise-dashboard-frontend.onrender.com/login';
+        window.location.href = '/login';
       }
       
       return Promise.reject({
         success: false,
-        error: data.error || 'An error occurred',
-        details: data.details,
-        status
-      });
-    } else if (error.request) {
-      // Network error
-      return Promise.reject({
-        success: false,
-        error: 'Network error. Please check your connection.',
-        details: null
-      });
-    } else if (error.code === 'ECONNABORTED') {
-      // Timeout error
-      return Promise.reject({
-        success: false,
-        error: 'Request timeout. Please try again.',
-        details: null
-      });
-    } else {
-      // Other errors
-      return Promise.reject({
-        success: false,
-        error: error.message || 'An unexpected error occurred',
-        details: null
+        error: data?.error || 'Server error',
+        details: data?.details,
+        status: status
       });
     }
+    
+    return Promise.reject({
+      success: false,
+      error: 'Network error',
+      details: error.message,
+      status: 0
+    });
   }
 );
 
@@ -96,7 +86,13 @@ export const login = async (credentials) => {
     const response = await api.post('/login', credentials);
     return { success: true, data: response.data };
   } catch (error) {
-    return error;
+    // Don't return the error object directly, return a formatted error response
+    return {
+      success: false,
+      error: error.response?.data?.error || 'Login failed',
+      details: error.response?.data?.details,
+      status: error.response?.status || 500
+    };
   }
 };
 
@@ -105,7 +101,12 @@ export const register = async (userData) => {
     const response = await api.post('/register', userData);
     return { success: true, data: response.data };
   } catch (error) {
-    return error;
+    return {
+      success: false,
+      error: error.response?.data?.error || 'Registration failed',
+      details: error.response?.data?.details,
+      status: error.response?.status || 500
+    };
   }
 };
 
@@ -114,7 +115,12 @@ export const getCurrentUser = async () => {
     const response = await api.get('/me');
     return { success: true, data: response.data };
   } catch (error) {
-    return error;
+    return {
+      success: false,
+      error: error.response?.data?.error || 'Failed to get user data',
+      details: error.response?.data?.details,
+      status: error.response?.status || 500
+    };
   }
 };
 
@@ -123,7 +129,12 @@ export const fetchProducts = async () => {
     const response = await api.get('/products');
     return { success: true, data: response.data };
   } catch (error) {
-    return error;
+    return {
+      success: false,
+      error: error.response?.data?.error || 'Failed to fetch products',
+      details: error.response?.data?.details,
+      status: error.response?.status || 500
+    };
   }
 };
 
@@ -132,7 +143,12 @@ export const fetchDashboardStats = async () => {
     const response = await api.get('/dashboard/stats');
     return { success: true, data: response.data };
   } catch (error) {
-    return error;
+    return {
+      success: false,
+      error: error.response?.data?.error || 'Failed to fetch dashboard stats',
+      details: error.response?.data?.details,
+      status: error.response?.status || 500
+    };
   }
 };
 
@@ -141,7 +157,12 @@ export const createProduct = async (productData) => {
     const response = await api.post('/products', productData);
     return { success: true, data: response.data };
   } catch (error) {
-    return error;
+    return {
+      success: false,
+      error: error.response?.data?.error || 'Failed to create product',
+      details: error.response?.data?.details,
+      status: error.response?.status || 500
+    };
   }
 };
 
@@ -150,7 +171,12 @@ export const updateProduct = async (id, productData) => {
     const response = await api.put(`/products/${id}`, productData);
     return { success: true, data: response.data };
   } catch (error) {
-    return error;
+    return {
+      success: false,
+      error: error.response?.data?.error || 'Failed to update product',
+      details: error.response?.data?.details,
+      status: error.response?.status || 500
+    };
   }
 };
 
@@ -159,7 +185,12 @@ export const deleteProduct = async (id) => {
     await api.delete(`/products/${id}`);
     return { success: true };
   } catch (error) {
-    return error;
+    return {
+      success: false,
+      error: error.response?.data?.error || 'Failed to delete product',
+      details: error.response?.data?.details,
+      status: error.response?.status || 500
+    };
   }
 };
 

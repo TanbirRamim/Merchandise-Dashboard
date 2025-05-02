@@ -4,8 +4,16 @@ export const login = async (email, password) => {
   try {
     const response = await api.post('/login', { email, password });
     if (response.data && response.data.token) {
-      // Set token in cookie
-      document.cookie = `token=${response.data.token}; path=/; secure; samesite=none`;
+      // Set token in cookie with appropriate settings
+      const cookieOptions = {
+        path: '/',
+        secure: true,
+        sameSite: 'none'
+      };
+      document.cookie = `token=${response.data.token}; ${Object.entries(cookieOptions)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('; ')}`;
+      
       return {
         success: true,
         user: response.data.user
@@ -19,7 +27,9 @@ export const login = async (email, password) => {
     console.error('Login error:', error);
     return {
       success: false,
-      error: error.response?.data?.error || 'Login failed. Please check your credentials.'
+      error: error.response?.data?.error || 'Login failed. Please check your credentials.',
+      details: error.response?.data?.details,
+      status: error.response?.status
     };
   }
 };
