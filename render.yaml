@@ -18,6 +18,18 @@ services:
       - key: RACK_ENV
         value: production
 
+  - type: web
+    name: merchandise-dashboard-frontend
+    env: node
+    buildCommand: cd client && npm install && npm run build
+    startCommand: cd client && npm start
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://merchandise-dashboard-backend.onrender.com
+      - key: NODE_ENV
+        value: production
+    staticPublishPath: client/build
+
 databases:
   - name: merchandise-dashboard-db
     databaseName: merchandise_dashboard
