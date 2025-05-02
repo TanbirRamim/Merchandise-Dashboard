@@ -108,9 +108,9 @@ Rails.application.configure do
 
   # Configure CORS headers
   config.action_dispatch.default_headers = {
-    'Access-Control-Allow-Origin' => '*',
+    'Access-Control-Allow-Origin' => 'https://681457cf8fbec35b3ba5446e--peppy-liger-65e0e1.netlify.app',
     'Access-Control-Allow-Methods' => 'GET, PUT, POST, DELETE, PATCH, OPTIONS',
-    'Access-Control-Allow-Headers' => 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers' => 'Content-Type, Authorization, Accept',
     'Access-Control-Allow-Credentials' => 'true',
     'Access-Control-Max-Age' => '600'
   }

@@ -7,12 +7,9 @@ const api = axios.create({
   baseURL: `${API_URL}/api`,
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    'Accept': 'application/json'
   },
-  withCredentials: true, // Important for cookies
+  withCredentials: true,
   timeout: 10000 // 10 seconds timeout
 });
 
