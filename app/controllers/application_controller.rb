@@ -2,7 +2,7 @@ class ApplicationController < ActionController::API
   include ActionController::Cookies
   include ActionController::RequestForgeryProtection
 
-  before_action :authorize
+  before_action :authenticate_user!
 
   def encode_token(payload)
     JWT.encode(payload, Rails.application.credentials.secret_key_base)
