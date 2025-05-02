@@ -1,9 +1,11 @@
 import { createContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { login as authLogin, logout as authLogout, getCurrentUser } from '../services/auth';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState(() => {
     // Try to get user from localStorage on initial load
     const savedUser = localStorage.getItem('user');
@@ -41,7 +43,9 @@ export const AuthProvider = ({ children }) => {
         // Clear token cookie and user data
         document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         localStorage.removeItem('user');
+        setCurrentUser(null);
         setError(response.error || 'Session expired. Please login again.');
+        navigate('/login');
       }
       setLoading(false);
     } catch (err) {
@@ -49,7 +53,9 @@ export const AuthProvider = ({ children }) => {
       // Clear token cookie and user data
       document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
       localStorage.removeItem('user');
+      setCurrentUser(null);
       setError('Session expired. Please login again.');
+      navigate('/login');
       setLoading(false);
     }
   };
@@ -61,6 +67,7 @@ export const AuthProvider = ({ children }) => {
       if (response.success) {
         setCurrentUser(response.user);
         setError(null);
+        navigate('/');
         return true;
       } else {
         setError(response.error || 'Login failed. Please check your credentials.');
@@ -68,7 +75,10 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.error || 'Login failed. Please check your credentials.');
+      if (err.shouldRedirect) {
+        navigate('/login');
+      }
+      setError(err.error || 'An unexpected error occurred');
       return false;
     }
   };
@@ -76,16 +86,26 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await authLogout();
+      setCurrentUser(null);
+      setError(null);
+      navigate('/login');
     } catch (err) {
       console.error('Logout error:', err);
-    } finally {
-      setCurrentUser(null);
-      localStorage.removeItem('user');
+      setError('Failed to logout');
     }
   };
 
+  const value = {
+    currentUser,
+    loading,
+    error,
+    login,
+    logout,
+    setError
+  };
+
   return (
-    <AuthContext.Provider value={{ currentUser, loading, error, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

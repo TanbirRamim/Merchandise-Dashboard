@@ -60,7 +60,13 @@ api.interceptors.response.use(
         // Unauthorized - clear token and redirect to login
         document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         localStorage.removeItem('user');
-        window.location.href = '/login';
+        // Instead of using window.location, return the error and let the component handle the redirect
+        return Promise.reject({
+          success: false,
+          error: 'Session expired. Please login again.',
+          status: 401,
+          shouldRedirect: true
+        });
       }
       
       return Promise.reject({
